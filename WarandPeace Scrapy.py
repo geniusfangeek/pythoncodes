@@ -1,9 +1,21 @@
-from urllib import urlopen
-from bs4 import BeautifulSoup
+# coding:utf-8
 
-html = urlopen('http://www.pythonscraping.com/pages/warandpeace.html')
-bsObj = BeautifulSoup(html,'lxml')
-names = bsObj.find_all('span',{'class':'green'})
+from lxml import etree
+import requests
+import time
+import pymongo
 
-for name in names:
-    print name.get_text()   # 将find出来的信息进行处理，提取文本内容
+'''
+通过xpath获得链家数据
+通过多线程实现快速爬去
+通过mongodb存入数据库
+'''
+
+def lj_html(url):
+    z1 = requests.get(url).content
+    html = etree.HTML(z1)
+    return html
+
+
+url = 'http://sh.lianjia.com/ershoufang'
+print lj_html(url)
