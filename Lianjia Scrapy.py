@@ -26,27 +26,47 @@ houseid = []
 
 house_ref = html.xpath('//ul/li/div/div/a/@href')
 # 此处插入房屋ID，即shxxxxx
-house_id = []
+id = []
+community = []
+address = []
+totalprice = []
+structure = []
+room_space = []
+certificate = []
 
 for x in house_ref:
     house_detail_url = 'http://sh.lianjia.com' + x
     z1 = requests.get(house_detail_url).content
     html2 = etree.HTML(z1)
+    house_id = 'sh'+ x.lstrip('/ershoufang/').rstrip('.html')
+    id.append(house_id)
     house_resident = html2.xpath('//ul[@class = "maininfo-minor maininfo-item"]/li/span/span/a[1]/text()')
-    house_id.append(house_resident)
+    community.append(house_resident)
     house_address = html2.xpath('//ul[@class = "maininfo-minor maininfo-item"]/li[5]/span[2]/text()')
+    address.append(house_address)
     house_totalprice = html2.xpath('//div[2]/aside/div[1]/div[1]/span[1]/text()')
+    totalprice.append(house_totalprice)
     house_unitprice = html2.xpath('//div[2]/aside/div[1]/div[2]/p/span/text()')
     house_structure = html2.xpath('//div[1]/div[@class = "module-col baseinfo-col2"]/ul[@class = "baseinfo-tb"]/li[1]/span[@class = "item-cell"]/text()')
+    structure.append(house_structure)
     house_height = html2.xpath('//div[1]/div[@class = "module-col baseinfo-col3"]/ul[@class = "baseinfo-tb"]/li[1]/span[@class = "item-cell"]/text()')
     house_space = html2.xpath('//div[1]/div[@class = "module-col baseinfo-col2"]/ul[@class = "baseinfo-tb"]/li[3]/span[@class = "item-cell"]/text()')
+    room_space.append(house_space)
     house_orientation = html2.xpath('//div[1]/div[@class = "module-col baseinfo-col3"]/ul[@class = "baseinfo-tb"]/li[3]/span[@class = "item-cell"]/text()')
     house_certificate_period = html2.xpath('//div[2]/div[@class = "module-col baseinfo-col2"]/ul[@class = "baseinfo-tb"]/li[2]/span[@class = "item-cell"]/text()')
+    certificate.append(house_certificate_period)
     house_type = html2.xpath('//div[2]/div[@class = "module-col baseinfo-col3"]/ul[@class = "baseinfo-tb"]/li[2]/span[@class = "item-cell"]/text()')
 
 
-df = pd.DataFrame(house_id)
-print df
+df = pd.DataFrame({'序号': id,
+                   '地址': address,
+                   '社区': community,
+                   '总价': totalprice,
+                   '房型': structure,
+                   '面积': room_space,
+                   '产证': certificate})
+
+print df.head(5)
 
 
 
