@@ -25,27 +25,28 @@ HEADER = {
 
 lj_origin = "http://sh.lianjia.com/ershoufang/d"
 
-def getsource(url):
-    z0 = requests.get(url).content
-    html0 = etree.HTML(z0)
-
-urls = []
-
-for i in range(1,5):
+for i in range(1,3):
     lj_url = lj_origin+str(i)
-    urls.append(lj_url)
+    if i == 1:
+        z0 = requests.get(lj_url).content
 
+    else:
+        z1 = requests.get(lj_url).content
+        z0 = z0 + z1
+
+html = etree.HTML(z0)
     # z0 = requests.get(lj_url).content
     # html = etree.HTML(z0)
+# def getsource(url):
+#     z0 = requests.get(url).content
+#
+# pool = ThreadPool(4)
+# results = pool.map(getsource(urls))
+# pool.close()
+# pool.join()
+# print results
 
-pool = ThreadPool(4)
-results = pool.map(getsource, urls)
-pool.close()
-pool.join()
-html = results
 
-
-houseid = []
 
 house_ref = html.xpath('//ul/li/div/div/a/@href')
 
@@ -60,8 +61,8 @@ height = []
 
 for x in house_ref:
     house_detail_url = 'http://sh.lianjia.com' + x
-    z1 = requests.get(house_detail_url).content
-    html2 = etree.HTML(z1)
+    z3 = requests.get(house_detail_url).content
+    html2 = etree.HTML(z3)
     house_id = 'sh'+ x.lstrip('/ershoufang/').rstrip('.html')
     id.append(house_id)
     house_resident = html2.xpath('//ul[@class = "maininfo-minor maininfo-item"]/li/span/span/a[1]/text()')[0]
@@ -81,7 +82,7 @@ for x in house_ref:
     house_certificate_period = html2.xpath('//div[2]/div[@class = "module-col baseinfo-col2"]/ul[@class = "baseinfo-tb"]/li[2]/span[@class = "item-cell"]/text()')[0]
     certificate.append(house_certificate_period)
     house_type = html2.xpath('//div[2]/div[@class = "module-col baseinfo-col3"]/ul[@class = "baseinfo-tb"]/li[2]/span[@class = "item-cell"]/text()')[0]
-
+    time.sleep(5)
 
 df = pd.DataFrame({'序号': id,
                    '地址': address,
@@ -96,11 +97,8 @@ df = pd.DataFrame({'序号': id,
 writer = pd.ExcelWriter('Lianjia_Data.xlsx')
 df.to_excel(writer,'sheet1')
 writer.save()
-
+#
 print 'done'
-# connection = pymongo.MongoClient()
-# tdb = connection.LianjiaData
-# post_info = tdb.test
 
 
 
